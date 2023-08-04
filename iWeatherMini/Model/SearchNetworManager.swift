@@ -5,7 +5,7 @@ import UIKit
 
 
 
-class SecondViewModel: NSObject {
+class SearchNetworManager: NSObject {
     
     // MARK: - let
     let backgroundImageView: Bindable<UIImage> = Bindable(UIImage())
@@ -23,15 +23,11 @@ class SecondViewModel: NSObject {
     // MARK: - func
     
     func callLoadDataUrl(city: String){
-
         if let url = URL(string:"https://api.openweathermap.org/data/2.5/weather?appid=51aa166cb6dd4873c45fb97c4b645fef&units=metric&q=\(city)"){
             var request = URLRequest(url: url)
             request.httpMethod = "GET"
-            
             let task = URLSession.shared.dataTask(with: request) { [self] (data, response, error) in
-                
                 if error == nil, let data = data{
-                    
                     do {
                         let data = try JSONDecoder().decode(WeatherObject.self, from: data)
                         print(data)
@@ -39,7 +35,7 @@ class SecondViewModel: NSObject {
                         print(weatherLoadSecond?.name as Any)
                         
                         DispatchQueue.main.async {
-                            self.printStoreboard()
+                            self.updateUI()
                         }
                         
                     } catch {
@@ -53,17 +49,11 @@ class SecondViewModel: NSObject {
         }else{
             self.currentCityLabel.value = "Неправельно указан город"
         }
-        
-        
     }
     
 
-    
-    
-    func printStoreboard(){
-        
+   private func updateUI(){
         DispatchQueue.main.async {
-            
             if self.weatherLoadSecond?.name == nil {
                 self.currentCityLabel.value = "Неправельно указан город"
                 return

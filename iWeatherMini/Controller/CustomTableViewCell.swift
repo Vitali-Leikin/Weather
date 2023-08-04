@@ -4,6 +4,7 @@ import UIKit
 
 class CustomTableViewCell: UITableViewCell {
     
+// MARK: -
     
     @IBOutlet weak var dayDateCellLabel: UILabel!
     @IBOutlet weak var dayImageViewCell: UIImageView!
@@ -16,7 +17,9 @@ class CustomTableViewCell: UITableViewCell {
     @IBOutlet weak var section: UIVisualEffectView!
     
     @IBOutlet weak var cellView: UIView!
+   
     
+// MARK: func
     func configureCell(with object: List ){
         let dayUrl = URL(string: "https://openweathermap.org/img/wn/\(object.weather?.first?.icon ?? "")@2x.png")
         
@@ -45,20 +48,15 @@ class CustomTableViewCell: UITableViewCell {
     
     func getDayForDate(_ date: Int?) -> String {
         guard let x = date else {return "error"}
-        //
         let timeInterval = TimeInterval(x)
         let myNSDate = Date(timeIntervalSince1970: timeInterval)
-        //
-        
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM d HH:mm"
         return  formatter.string(from: myNSDate)
     }
     
-    
-    
-    
-    func loadImageUrlNight(_ str: String) -> URL{
+
+  private func loadImageUrlNight(_ str: String) -> URL{
         switch str {
         case "01d":
             let url = URL(string: "https://openweathermap.org/img/wn/01n@2x.png")
@@ -91,13 +89,11 @@ class CustomTableViewCell: UITableViewCell {
         default:
             let url = URL(string: "https://openweathermap.org/img/wn/10n@.png")
             return url!
-            
         }
     }
-
-    
 }
 
+// MARK: UIView cornerRadius
 extension UIView {
     func rounded(radius: CGFloat) {
         self.layer.cornerRadius = radius

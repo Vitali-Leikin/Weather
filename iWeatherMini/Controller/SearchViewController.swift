@@ -5,44 +5,36 @@ import UIKit
 class SearchViewController: UIViewController {
     
     // MARK: - IBOutlet
-    
-    
+
     @IBOutlet weak var backgroundImageView: UIImageView!
     @IBOutlet weak var currentCityLabel: UILabel!
     @IBOutlet weak var currentDescriptionWeatherLabel: UILabel!
     @IBOutlet weak var tempBasicLabel: UILabel!
     @IBOutlet weak var currentImageView: UIImageView!
-    
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var tempMax: UILabel!
     @IBOutlet weak var tempMin: UILabel!
-    
     @IBOutlet weak var firstLineView: UIView!
     @IBOutlet weak var thirdLineView: UIView!
-    
     @IBOutlet weak var secondLineView: UIView!
-    
     @IBOutlet weak var allLineView: UIView!
     @IBOutlet weak var searchBar: UISearchBar!
     
     
     // MARK: - var
     
-    private var secondViewModel = SecondViewModel()
+    private var searchModel = SearchNetworManager()
     
-    // MARK: - viewDidLoad
+    // MARK: - LifeCycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.swipeViewController()
-        
         self.searchBar.delegate = self
         registerForKeyboardNotifications()
     }
     
-    
- 
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         firstLineView.setupShadow()
@@ -55,39 +47,7 @@ class SearchViewController: UIViewController {
         
     }
     
-    // MARK: - func
-    
-    private func configureUI(){
-        
-        self.secondViewModel.currentCityLabel.bind { (currentCityLabel) in
-            self.currentCityLabel.text = currentCityLabel
-        }
-        self.secondViewModel.tempBasicLabel.bind { (tempBasicLabel) in
-            self.tempBasicLabel.text = tempBasicLabel
-        }
-        
-        self.secondViewModel.currentDescriptionWeatherLabel.bind { (currentDescriptionWeatherLabel) in
-            self.currentDescriptionWeatherLabel.text = currentDescriptionWeatherLabel
-        }
-        self.secondViewModel.currentCityLabel.bind { (currentCityLabel) in
-            self.currentCityLabel.text = currentCityLabel
-        }
-        self.secondViewModel.currentImageView.bind { (currentImageView) in
-            self.currentImageView.image = currentImageView
-        }
-        self.secondViewModel.backgroundImageView.bind { (backgroundImageView) in
-            self.backgroundImageView.image = backgroundImageView
-        }
-        self.secondViewModel.minTemp.bind { tempMin in
-            self.tempMin.text = tempMin
-        }
-        self.secondViewModel.maxTemp.bind { tempMax in
-            self.tempMax.text = tempMax
-        }
-        
-    }
-    
-    
+    // MARK: - IBAction
     
     @IBAction func addCityButton(_ sender: UIBarButtonItem) {
         guard let text = currentCityLabel.text else {fatalError("")}
@@ -96,13 +56,9 @@ class SearchViewController: UIViewController {
             mSave.shared.loadCity(str: text)
         }
         navigationItem.rightBarButtonItem?.isEnabled = false
-        
-        UIView.animate(withDuration: 1.0) { //1
-            
-
+        UIView.animate(withDuration: 1.0) {
            self.navigationItem.title = "Saved"
         }
-        
     }
     
     
@@ -111,7 +67,6 @@ class SearchViewController: UIViewController {
         let swipeClear = UISwipeGestureRecognizer(target: self, action: #selector(jumpViewController))
         swipeClear.direction = .right
         self.view.addGestureRecognizer(swipeClear)
-        
     }
     
     
@@ -120,10 +75,42 @@ class SearchViewController: UIViewController {
     }
     
     
-    // MARK: - IBAction
+   
     
     
+    // MARK: - func
     
+    private func configureUI(){
+        
+        self.searchModel.currentCityLabel.bind { (currentCityLabel) in
+            self.currentCityLabel.text = currentCityLabel
+        }
+        self.searchModel.tempBasicLabel.bind { (tempBasicLabel) in
+            self.tempBasicLabel.text = tempBasicLabel
+        }
+        
+        self.searchModel.currentDescriptionWeatherLabel.bind { (currentDescriptionWeatherLabel) in
+            self.currentDescriptionWeatherLabel.text = currentDescriptionWeatherLabel
+        }
+        self.searchModel.currentCityLabel.bind { (currentCityLabel) in
+            self.currentCityLabel.text = currentCityLabel
+        }
+        self.searchModel.currentImageView.bind { (currentImageView) in
+            self.currentImageView.image = currentImageView
+        }
+        self.searchModel.backgroundImageView.bind { (backgroundImageView) in
+            self.backgroundImageView.image = backgroundImageView
+        }
+        self.searchModel.minTemp.bind { tempMin in
+            self.tempMin.text = tempMin
+        }
+        self.searchModel.maxTemp.bind { tempMax in
+            self.tempMax.text = tempMax
+        }
+        
+    }
+    
+ 
     private func registerForKeyboardNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -152,11 +139,9 @@ class SearchViewController: UIViewController {
         }
     }
     
-    
-    
-    
 }
 
+// MARK: extension SearchViewController UISearchBarDelegate
 
 extension SearchViewController: UISearchBarDelegate{
     
@@ -165,7 +150,7 @@ extension SearchViewController: UISearchBarDelegate{
         guard var city  = searchBar.text else { fatalError("")}
         if !city.isEmpty{
             city = city.replacingOccurrences(of: " ", with: "%20")
-            self.secondViewModel.callLoadDataUrl(city: city)
+            self.searchModel.callLoadDataUrl(city: city)
             allLineView.isHidden = false
             searchBar.resignFirstResponder()
             searchBar.text = ""

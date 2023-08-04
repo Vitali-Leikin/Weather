@@ -11,27 +11,25 @@ class ViewController: UIViewController {
     @IBOutlet weak var mainView: UIView!
     @IBOutlet weak var tableView: UIView!
     @IBOutlet weak var myTableView: UITableView!
- //   @IBOutlet weak var currentCityLabel: UILabel!
     @IBOutlet weak var currentTempBasicLabel: UILabel!
     @IBOutlet weak var currentImageView: UIImageView!
     @IBOutlet weak var currentDescriptionWeatherLabel: UILabel!
-    //@IBOutlet weak var currentDateLabel: UILabel!
-    
     @IBOutlet weak var bluerView: UIVisualEffectView!
     @IBOutlet weak var viewMainDescribe: UIView!
+    
     // MARK: - let
-
+    
     private let locationManager = CLLocationManager()
     let managerVC = NetworkManager()
     let defaults = UserDefaults.standard
-
+    
     // MARK: - var
     var circleSize: CGFloat{
         return viewMainDescribe.layer.frame.height / 2
     }
     var models = [List]()
-
-    // MARK: - viewDidLoad
+    
+    // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         managerVC.delegate = self
@@ -39,13 +37,11 @@ class ViewController: UIViewController {
         self.myTableView.separatorColor = .clear
         
     }
-
+    
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.startlocationManager()
-        
-       // self.myTableView.reloadData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -56,49 +52,47 @@ class ViewController: UIViewController {
         viewMainDescribe.layer.masksToBounds = true
     }
     
-    // MARK: - func
+    // MARK: - @IBAction
     
-
-    func startlocationManager() {
-        
-        self.locationManager.delegate = self
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        self.locationManager.requestAlwaysAuthorization()
-        self.locationManager.startUpdatingLocation()
-        
-    }
     
     @IBAction func searchCityButton(_ sender: UIBarButtonItem) {
         jumpSearchVC()
     }
     
-    
     @IBAction func addButton(_ sender: UIBarButtonItem) {
-
         let str = navigationController?.navigationBar.topItem?.title ?? ""
         mSave.shared.loadCity(str: str)
         jumpSecondViewController()
-   
+        
     }
     
-    func swipeSecondViewController(){
+    // MARK: - func
+    
+    private func startlocationManager() {
+        self.locationManager.delegate = self
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        self.locationManager.requestAlwaysAuthorization()
+        self.locationManager.startUpdatingLocation()
+    }
+    
+    private func swipeSecondViewController(){
         let swipeClear = UISwipeGestureRecognizer(target: self, action: #selector(jumpSecondViewController))
         swipeClear.direction = .left
         self.view.addGestureRecognizer(swipeClear)
     }
     
-    func jumpSearchVC(){
+    private func jumpSearchVC(){
         guard let controller = self.storyboard?.instantiateViewController(withIdentifier: K.searchVC.rawValue) as? SearchViewController else{return}
-                self.navigationController?.pushViewController(controller, animated: true)
+        self.navigationController?.pushViewController(controller, animated: true)
     }
     
-    @objc func jumpSecondViewController(){
+    @objc private func jumpSecondViewController(){
         guard let controller = self.storyboard?.instantiateViewController(withIdentifier: K.savedTableVC.rawValue) as? SavedTableViewController else{return}
         self.navigationController?.pushViewController(controller, animated: true)
     }
 }
 
-
+// MARK: extension ViewController: UITableViewDelegate, UITableViewDataSource
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource{
     
@@ -126,10 +120,10 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource{
     
 }
 
-
+// MARK: extension ViewController: CLLocationManagerDelegate
 
 extension ViewController: CLLocationManagerDelegate{
-
+    
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
             locationManager.stopUpdatingLocation()
@@ -140,8 +134,8 @@ extension ViewController: CLLocationManagerDelegate{
             DispatchQueue.main.async {
                 self.managerVC.callLoadDataUrl(lat: lat, long: lon)
             }
-            }
         }
+    }
     
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
@@ -150,6 +144,7 @@ extension ViewController: CLLocationManagerDelegate{
     }
 }
 
+// MARK: extension ViewController: WeatherManagerDelegate
 
 extension ViewController: WeatherManagerDelegate{
     func didUpdateWeather(_ weatherManager: NetworkManager, weather: Any) {
@@ -180,10 +175,10 @@ extension ViewController: WeatherManagerDelegate{
             
             if let safeW = safeWeather.list {
                 self.models.append(contentsOf: safeW )
-
+                
             }
             self.myTableView.reloadData()
-                   }
+        }
     }
     
     
@@ -191,7 +186,7 @@ extension ViewController: WeatherManagerDelegate{
     func didFailWithError(error: Error) {
         print(error)
     }
-
+    
 }
 
 

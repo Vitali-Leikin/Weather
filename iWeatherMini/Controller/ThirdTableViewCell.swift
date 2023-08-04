@@ -8,6 +8,7 @@
 import UIKit
 
 class ThirdTableViewCell: UITableViewCell {
+    // MARK: - IBOutlet
     
     @IBOutlet weak private var imageLabel: UIImageView!
     @IBOutlet private weak var temperatureLabel: UILabel!
@@ -15,9 +16,9 @@ class ThirdTableViewCell: UITableViewCell {
     @IBOutlet weak var backGroundView: UIView!
     @IBOutlet weak var nameCity: UILabel!
     
+    // MARK: - func
+    
     func setCell(img: UIImage, temp: String, describe:String, city: String){
-        
-        
         describeLabel.text = describe
         temperatureLabel.text = temp + "°C"
         nameCity.text = city
@@ -27,6 +28,7 @@ class ThirdTableViewCell: UITableViewCell {
     }
 }
 
+// MARK: - extension UIView shadow
 extension UIView {
 
      func setupShadow() {
