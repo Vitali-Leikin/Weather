@@ -9,7 +9,7 @@ import UIKit
 
 class SavedTableViewController: UITableViewController {
     
-//MARK: var
+    //MARK: var
     
     var modelArray: [WeatherObject] = []
     var networManager = NetworkManager()
@@ -25,7 +25,7 @@ class SavedTableViewController: UITableViewController {
         tableView.register(UINib(nibName: K.searchCell.rawValue, bundle: nil), forCellReuseIdentifier: K.tabCell.rawValue)
     }
     
-//MARK: func
+    //MARK: func
     func loadCity() {
         let array = mSave.shared.defaults.stringArray(forKey: mSave.shared.keyCity)
         if let safeArray = array{
@@ -39,7 +39,7 @@ class SavedTableViewController: UITableViewController {
     
     
     
-// MARK: - Table view data source
+    // MARK: - Table view data source
     
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -68,26 +68,31 @@ class SavedTableViewController: UITableViewController {
             }
         }
         
-        
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
-        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") {  (contextualAction, view, boolValue) in
-            tableView.deleteRows(at: [indexPath], with: .automatic)
+        if editingStyle == .delete{
+            tableView.beginUpdates()
+            modelArray.remove(at: indexPath.row)
+            mSave.shared.removeCity(indexPath.row)
         }
-        deleteAction.image = UIImage(named: "delete-icon")
-        let swipeActions = UISwipeActionsConfiguration(actions: [deleteAction])
-        modelArray.remove(at: indexPath.row)
-        mSave.shared.removeCity(indexPath.row)
-        return swipeActions
+        tableView.deleteRows(at: [indexPath], with: .none)
+        tableView.endUpdates()
+        tableView.reloadData()
+    }
+    
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 150
     }
 }
+
+
 
 //MARK: extension SavedTableViewController: WeatherManagerDelegate
 
