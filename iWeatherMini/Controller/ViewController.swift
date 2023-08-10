@@ -96,6 +96,47 @@ class ViewController: UIViewController {
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource{
     
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
+       // view.backgroundColor =  #colorLiteral(red: 1, green: 0.3653766513, blue: 0.1507387459, alpha: 1)
+      //  view.backgroundColor = .blu
+           
+        let blurEffect = UIBlurEffect(style: UIBlurEffect.Style.regular)
+        let blurEffectView = UIVisualEffectView(effect: blurEffect)
+        blurEffectView.frame = view.bounds
+        blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        blurEffectView.layer.masksToBounds = true
+        blurEffectView.layer.cornerRadius = K.uiSize.cornerRadius.rawValue
+        view.addSubview(blurEffectView)
+        
+        let lbl = UILabel(frame: CGRect(x: 15, y: view.frame.origin.y, width: view.frame.width, height: 40))
+        lbl.font = UIFont.systemFont(ofSize: 25)
+        lbl.textColor = .black
+        lbl.text = "Weather for 6 days: "
+        lbl.layer.masksToBounds = true
+        lbl.layer.cornerRadius = 10
+        
+        view.addSubview(lbl)
+        
+       
+        
+        
+        
+        return view
+    }
+    
+    
+        func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+               return 40
+        }
+    
+    
+    
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return models.count
     }

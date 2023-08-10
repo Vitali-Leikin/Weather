@@ -14,7 +14,10 @@ enum K: String{
     case customTableViewCell = "CustomTableViewCell"
     case tabCell = "tabThirdCell"
     case searchCell = "ThirdTableViewCell"
-    
+   
+    enum uiSize:CGFloat{
+        case cornerRadius = 5
+    }
 
     
 }

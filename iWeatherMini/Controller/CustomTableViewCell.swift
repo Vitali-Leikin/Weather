@@ -42,7 +42,7 @@ class CustomTableViewCell: UITableViewCell {
         }
         
         
-        self.section.rounded(radius: 20)
+        self.section.rounded(radius: K.uiSize.cornerRadius.rawValue)
     }
     
     
